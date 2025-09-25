@@ -251,3 +251,18 @@ __marimo__/
 
 **/.DS_Store
 .Rproj.user
+
+
+# LaTeX 
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+
+# Output PDF
+*.pdf
