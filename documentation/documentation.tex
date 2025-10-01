@@ -60,9 +60,8 @@ Koristimo stratifikovano uzorkovanje sa pilot fazom i Neymanov metod raspodele o
 \newline
 \newline
 \noindent Rezultati su primenljivi u realnim uslovima i lako se prilagođavaju drugim lokacijama, rezolucijama i opterećenjima scene.
-\newline
-\newline
-\noindent Napomena da metod ima ograničenja, jer tačnost zavisi od kvaliteta ulaznih snimaka (osvetljenje, senke, refleksije, zaklanjanja), kao i od stabilnosti veze između vizuelnih signala i stvarne prisutnosti ljudi. Dodatno ograničenje je to što se u ovom pristupu prebrojavaju samo upaljeni blicevi, dok je stvarni broj ljudi sigurno veći od broja registrovanih bliceva.
+\paragraph{Napomena}
+Metod ima ograničenja, jer tačnost zavisi od kvaliteta ulaznih snimaka (osvetljenje, senke, refleksije, zaklanjanja), kao i od stabilnosti veze između vizuelnih signala i stvarne prisutnosti ljudi. Dodatno ograničenje je to što se u ovom pristupu prebrojavaju samo upaljeni blicevi, dok je stvarni broj ljudi sigurno veći od broja registrovanih bliceva.
 
 
 
@@ -311,11 +310,334 @@ Nakon vizuelne provere i eventualnih korekcija, \texttt{strata\_map\_auto.csv} s
 
 \section{Pilot uzorak i Neyman}
 
+\subsection{Pilot uzorak}
+... 
+
+mozda ne mora podnaslov?
+
+\subsubsection{Vizuelizacija pilot uzorka}
+
+Uz CSV \texttt{pilot\_to\_count.csv}, za svaku ulaznu sliku generišemo i PNG sa označenim ćelijama pilota. Na overlay-ima:
+\begin{itemize}
+	\item cela slika je prikazana,
+	\item zelenim okvirima su označene ćelije koje su ušle u pilot uzorak.
+\end{itemize}
+
+\begin{figure}[H] 
+	\centering 
+	\includegraphics[width=0.8\textwidth]{../outputs/sampling_outputs/plot_overlays_image/pilot_overlay_slavija-centar.png} 
+	\caption{Slavija.} 
+	\label{fig:slavija} 
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+  
+	% Prvi red
+	\begin{subfigure}[b]{0.3\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{../outputs/sampling_outputs/plot_overlays_image/pilot_overlay_prote-mateje.png}
+	  \caption{Prote Mateje}
+	  \label{fig:prote-mateje}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{../outputs/sampling_outputs/plot_overlays_image/pilot_overlay_nemanjina.png}
+	  \caption{Nemanjina}
+	  \label{fig:nemanjina}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../outputs/sampling_outputs/plot_overlays_image/pilot_overlay_beogradska.png}
+		\caption{Beogradska}
+		\label{fig:beogradska}
+	\end{subfigure}
+  
+	\vspace{0.3cm} % razmak između redova
+  
+	% Drugi red
+	\begin{subfigure}[b]{0.3\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{../outputs/sampling_outputs/plot_overlays_image/pilot_overlay_makenzijeva.png}
+	  \caption{Makenzijeva}
+	  \label{fig:makenzijeva}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{../outputs/sampling_outputs/plot_overlays_image/pilot_overlay_kralja-milana.png}
+	  \caption{Kralja Milana}
+	  \label{fig:kralja-milana}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{../outputs/sampling_outputs/plot_overlays_image/pilot_overlay_bulevar-oslobodjenja.png}
+	  \caption{Bulevar oslobođenja}
+	  \label{fig:bulevar-oslobodjenja}
+	\end{subfigure}
+  
+	\caption{Prikaz preklopa (overlay) pilot ćelija preko svake slike}
+\end{figure}
+
+\noindent
+Ovaj vizuelni prikaz će nam omogućiti da lakše odredimo u kojim ćelijamo brojimo bliceve. 
+Kako bismo popunili napravljeni CSV, korisićemo automatsko brojanje bliceva pomoću python skripte \texttt{auto-count.py}, o kojoj će biti više
+reči u narednom poglavlju. Dodatno za neke ćelije koristili smo ručno brojanje.
+
+\subsection{Neymanov metod raspodele obima uzorka po stratumima}
+
+... 
+
+Pogledaj brojeve kad se popravi ono za celije da se izbace
+\newline
+\newline
+\noindent
+Zbog zaokruživanja često se dešava da zbir po stratumima odstupa od ciljne veličine uzorka $n$:
+\[
+\sum_h n_h \;\neq\; n.
+\]
+Taj višak ili manjak može biti nekoliko jedinica, a ne sme se ignorisati jer remeti planirano uzorkovanje.
+Zato uvodimo malu popravku (balansiranje) kako bismo tačno pogodili cilj:
+\begin{itemize}
+  \item Izračunava se razlika od cilja:
+  \[
+  \text{diff} = n - \sum_h n_h.
+  \]
+  \item Popravka se primenjuje u \textbf{stratumu 1} (najgušći), jer taj stratum obično najviše doprinosi varijansi. 
+  \item Ako je $\text{diff} > 0$ (fali uzoraka) i $n_1 < N_1$, dodaje se $\min(\text{diff}, N_1 - n_1)$ u stratumu 1.
+  \item Ako je $\text{diff} < 0$ (ima viška) i $n_1 > \min(n_{\min}, N_1)$, oduzima se $\min(-\text{diff}, n_1 - n_{\min})$.
+\end{itemize}
+
+\noindent
+Nakon primene Neymanove alokacije, ukupni brojevi uzoraka po slici su prikazani u Tabeli \ref{tab:alloc-fix-real}.  
+Vidimo da su kod većine slika ukupni brojevi tačno jednaki cilju $n=180$, dok su kod dve slike odstupali za $\pm 1$.  
+U skladu sa procedurom popravke, razlika je uvek ispravljena unutar stratuma 1, tako da je konačan broj uzoraka po slici tačno $n=180$.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lccc}
+\hline
+Slika & Total pre & Target & Total posle \\
+\hline
+beogradska.jpeg          & 179 & 180 & 180 \\
+bulevar-oslobodjenja.jpeg & 179 & 180 & 180 \\
+kralja-milana.jpeg       & 180 & 180 & 180 \\
+makenzijeva.jpeg         & 180 & 180 & 180 \\
+nemanjina.jpeg           & 180 & 180 & 180 \\
+prote-mateje.jpeg        & 181 & 180 & 180 \\
+slavija-centar.jpeg      & 180 & 180 & 180 \\
+\hline
+\end{tabular}
+\caption{Ukupni brojevi uzoraka po slici pre i posle korekcije.}
+\label{tab:alloc-fix-real}
+\end{table}
+
+\noindent
+U Tabeli \ref{tab:alloc-beogradska} prikazana je raspodela uzorka po stratumima za sliku \texttt{beogradska.jpeg}.  
+Vidimo da je zbir po stratumima iznosio $179$ (umesto ciljanih $180$).  
+Korekcijom je dodata jedna jedinica u stratumu 1, tako da se ukupni broj uzoraka uskladio sa ciljem.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lcccc}
+\hline
+Stratum & $n_h$ (pre) & $N_h$ & Diff & $n_h$ (posle) \\
+\hline
+1 & 55 & 226 & +1 & 56 \\
+2 & 51 & 226 & 0  & 51 \\
+3 & 73 & 226 & 0  & 73 \\
+\hline
+\textbf{Ukupno} & 179 & 678 & +1 & 180 \\
+\hline
+\end{tabular}
+\caption{Primer raspodele po stratumima za sliku beogradska.jpeg (pre i posle korekcije).}
+\label{tab:alloc-beogradska}
+\end{table}
+
 \section{Glavno uzorkovanje i brojanje “bliceva”}
 
-\section{Procene i intervali poverenja}
+... 
+
+\subsection{Vizuelizacija glavnog uzorkovanja}
+
+Uz CSV \texttt{main\_to\_count.csv}, za svaku ulaznu sliku generišemo i PNG sa označenim ćelijama pilota. Na overlay-ima:
+\begin{itemize}
+	\item cela slika je prikazana,
+	\item zelenim okvirima su označene ćelije koje su ušle u pilot uzorak.
+\end{itemize}
+
+\begin{figure}[H] 
+	\centering 
+	\includegraphics[width=0.8\textwidth]{../outputs/sampling_outputs/main_overlays_image/main_overlay_slavija-centar.png} 
+	\caption{Slavija.} 
+	\label{fig:slavija} 
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+  
+	% Prvi red
+	\begin{subfigure}[b]{0.3\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{../outputs/sampling_outputs/main_overlays_image/main_overlay_prote-mateje.png}
+	  \caption{Prote Mateje}
+	  \label{fig:prote-mateje}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{../outputs/sampling_outputs/main_overlays_image/main_overlay_nemanjina.png}
+	  \caption{Nemanjina}
+	  \label{fig:nemanjina}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../outputs/sampling_outputs/main_overlays_image/main_overlay_beogradska.png}
+		\caption{Beogradska}
+		\label{fig:beogradska}
+	\end{subfigure}
+  
+	\vspace{0.3cm} % razmak između redova
+  
+	% Drugi red
+	\begin{subfigure}[b]{0.3\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{../outputs/sampling_outputs/main_overlays_image/main_overlay_makenzijeva.png}
+	  \caption{Makenzijeva}
+	  \label{fig:makenzijeva}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{../outputs/sampling_outputs/main_overlays_image/main_overlay_kralja-milana.png}
+	  \caption{Kralja Milana}
+	  \label{fig:kralja-milana}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{../outputs/sampling_outputs/main_overlays_image/main_overlay_bulevar-oslobodjenja.png}
+	  \caption{Bulevar oslobođenja}
+	  \label{fig:bulevar-oslobodjenja}
+	\end{subfigure}
+  
+	\caption{Prikaz preklopa (overlay) ćelija za glavno uzorkovanje preko svake slike}
+\end{figure}
+
+\noindent
+Ovaj vizuelni prikaz će nam omogućiti da lakše odredimo u kojim ćelijamo brojimo bliceve. 
+Kako bismo popunili napravljeni CSV, korisićemo automatsko brojanje bliceva pomoću python skripte \texttt{auto-count.py}, o kojoj će biti više
+reči u nastavku. Dodatno za neke ćelije koristili smo ručno brojanje.
+
+
+\subsection{Automatsko brojanje (Python)}
+Ne znam da li ovo mozda posebno poglavlje a mozda da ostane deo, odluci
+\newline
+\newline
+\noindent
+Koristimo skriptu (auto-count.py) koja popunjava kolonu y u \texttt{pilot\_to\_count.csv} ili \texttt{main\_to\_count.csv}.
+\newline
+\noindent Ulaz: 
+\begin{itemize}
+	\item \texttt{frame\_csv} = \texttt{strata\_map\_auto.csv} (sve ćelije sa koordinatama).
+	\item \texttt{pilot\_csv} ili \texttt{main\_csv} (lista ciljnih ćelija za brojanje: \texttt{img\_path}, stratum, \texttt{cell\_id}, y).
+\end{itemize}
+\noindent Izlaz:
+\begin{itemize}
+	\item CSV sa popunjenim y
+	\item Per-image „clean count“ pregled (cela slika sa označenim pilot/main ćelijama i svim detektovanim tačkama).
+\end{itemize}
+
+Da li da ubacimo ove clean-count slike??
+
+\noindent
+Detekcija (pipeline):
+\begin{enumerate}
+  \item \textbf{CLAHE:} pojačavanje lokalnog kontrasta - pojačava sitne detalje i smanjuje uticaj globalnog osvetljenja.
+  \item \textbf{White tophat:} uklanjanje širokih oreola/sjaja, ostavljajući sitne tačkice.
+  \item \textbf{Maska „vrućih“ regiona:} (Gaussian + prag + blago širenje) - spreči lažno detektovanje po jakim odsjajima.
+  \item \textbf{LoG (Laplacian of Gaussian):} traži “kružne” sitne strukture sa ograničenjem skale
+\end{enumerate}
+
+\section{Ocene i intervali poverenja}
+
+Neka su $h=1,2,3$ stratumi, $N_h$ broj dostupnih ćelija u stratumu $h$ (u okviru jedne slike), a $n_h$ broj uzorkovanih ćelija u istom stratumu. 
+Za svaku izabranu ćeliju merimo $y$ (broj ``tačkica''/detekcija u ćeliji). Pretpostavka je da su posmatranja unutar stratuma prost slučajni uzorak bez ponavljanja; slike su međusobno disjunktne (bez preklapanja).
+\newline
+\newline
+\noindent
+Za jednu sliku, stratumsku sredinu ocenjujemo kao
+\[
+\bar y_h \;=\; \frac{1}{n_h}\sum_{i=1}^{n_h} y_{hi}, 
+\qquad
+s_h^2 \;=\; \frac{1}{n_h-1}\sum_{i=1}^{n_h}\bigl(y_{hi}-\bar y_h\bigr)^2,
+\]
+uz konvenciju $s_h^2=0$ kada je $n_h=1$.
+Ukupan broj (total) za sliku ocenjujemo:
+\[
+\hat T \;=\; \sum_{h=1}^H N_h\,\bar y_h.
+\]
+Occenu varijanse dobijamo sa korekcijom konačne populacije po stratumu:
+\[
+\widehat{\mathrm{Var}}(\hat T) \;=\; \sum_{h=1}^H 
+N_h^2 \left(1-\frac{n_h}{N_h}\right)\frac{s_h^2}{n_h}.
+\]
+Standardna greška je $\mathrm{SE}=\sqrt{\widehat{\mathrm{Var}}(\hat T)}$, a za nivo poverenja $1-\alpha$ koristimo
+\[
+\hat T \;\pm\; z_{1-\alpha/2}\cdot \mathrm{SE},
+\]
+gde je $z_{1-\alpha/2}$ kvantil standardne normalne raspodele (u praksi $\alpha=0{.}05$, pa je $z_{0{.}975}\approx 1{.}96$).
+
+\paragraph{Napomena o malim uzorcima.}
+Ako su $n_h$ vrlo mali (npr.\ $n_h\le 5$), interval poverenja zasnovan na $t$-kvantilu sa $n_h-1$ stepeni slobode može biti konzervativniji; u ovom radu, imajući u vidu veličine uzoraka po stratumu, z-kvantili su adekvatni.
+\newline
+\newline
+\noindent
+Kako su slike disjunktne, ukupna ocena za ceo skup dobija se sabiranjem po slikama:
+\[
+\hat T_{\mathrm{tot}} \;=\; \sum_{j} \hat T_j,
+\qquad
+\widehat{\mathrm{Var}}(\hat T_{\mathrm{tot}}) \;=\; \sum_{j} \widehat{\mathrm{Var}}(\hat T_j),
+\]
+pa je $\mathrm{SE}_{\mathrm{tot}}=\sqrt{\sum_j \widehat{\mathrm{Var}}(\hat T_j)}$ i interval poverenja glasi
+\[
+\hat T_{\mathrm{tot}} \;\pm\; z_{1-\alpha/2}\cdot \mathrm{SE}_{\mathrm{tot}}.
+\]
+
 
 \section{Rezultati i diskusija}
+
+Kad se popravi ono, promeni brojeve 
+\newline
+\noindent
+U Tabeli \ref{tab:results} prikazani su rezultati, odnosno ocene dobijene po pojedinačnim slikama, kao i ukupna ocena.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrrr}
+\hline
+Slika & $\hat T$ & SE & CI donja & CI gornja \\
+\hline
+\texttt{beogradska.jpeg}          & 41,056  & 383 & 40,306  & 41,807  \\
+\texttt{bulevar-oslobodjenja.jpeg}& 17,339  & 213 & 16,922  & 17,756  \\
+\texttt{kralja-milana.jpeg}       & 13,815  & 182 & 13,459  & 14,171  \\
+\texttt{makenzijeva.jpeg}         & 19,767  & 215 & 19,345  & 20,188  \\
+\texttt{nemanjina.jpeg}           & 15,405  & 175 & 15,062  & 15,748  \\
+\texttt{prote-mateje.jpeg}        & 5,544   & 48  & 5,451   & 5,637   \\
+\texttt{slavija-centar.jpeg}      & 57,479  & 703 & 56,100  & 58,857  \\
+\hline
+\textbf{Ukupno}                   & \textbf{170,405} & \textbf{894} & \textbf{168,653} & \textbf{172,156} \\
+\hline
+\end{tabular}
+\caption{Procene ukupnog broja bliceva po slici i ukupno, sa 95\% intervalima poverenja.}
+\label{tab:results}
+\end{table}
+
+... sta znaci ..
 
 \section{Zaključak}
 
