@@ -84,14 +84,17 @@ make_grids_and_exports <- function(image_paths, nx=40, ny=40, zone_id=1,
                                    out_dir = "grid_output") {
   dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
   
-  all_cells <- lapply(image_paths, function(pth) {
-    df <- make_grid_for_image(pth, nx=nx, ny=ny, zone_id=zone_id)
+  all_cells <- lapply(seq_along(image_paths), function(i) {
+    src_path <- image_paths[i]
+    zid <- if (length(zone_id) == 1) zone_id else zone_id[i]
+    
+    df <- make_grid_for_image(src_path, nx=nx, ny=ny, zone_id=zid)
     # save overlay PNG with grid
     overlay_png <- file.path(
       out_dir,
-      paste0(tools::file_path_sans_ext(basename(pth)), "_grid.png")
+      paste0(tools::file_path_sans_ext(basename(src_path)), "_grid.png")
     )
-    plot_grid_overlay(pth, df, save_to = overlay_png)
+    plot_grid_overlay(src_path, df, save_to = overlay_png)
     df
   }) |> bind_rows()
   
@@ -121,7 +124,7 @@ imgs <- c("./images/slavija-centar.jpeg", "./images/prote-mateje.jpeg",
 out <- make_grids_and_exports(
   image_paths = imgs,
   nx = 40, ny = 40,
-  zone_id = 1,            
-  out_dir = "grid_output",
+  zone_id =  seq_along(imgs),            
+  out_dir = "grid_output"
 )
 
