@@ -311,10 +311,25 @@ Nakon vizuelne provere i eventualnih korekcija, \texttt{strata\_map\_auto.csv} s
 \section{Pilot uzorak i Neyman}
 
 \subsection{Pilot uzorak}
-... 
 
-mozda ne mora podnaslov?
+U okviru implementacije uzorkovanja (\texttt{sampling\_pipeline.R} datoteka), 
+prvi korak je izdvajanje pilot uzorka iz svakog stratuma. 
+Za svaku sliku, unutar svakog sloja nasumično se bira fiksan broj jedinica 
+(\texttt{pilot\_n\_per\_stratum}), koji u ovom primeru iznosi $15$. Broj odabranih jedinica u pilot fazi ($n_h = 15$ u ovom primeru) predstavlja kompromis između 
+dovoljno velike veličine za pouzdane procene i ograničavanja troška uzorkovanja.
+Na ovaj način dobija se preliminarni uzorak dovoljan da se procene osnovne 
+karakteristike slojeva, poput srednje vrednosti i disperzije.
 
+Procene iz pilot uzorka koriste se da bi se izračunale disperzije unutar slojeva. 
+Za sloj $h$ disperzija se računa po formuli:
+\[
+s_h^2 = \frac{1}{n_h - 1} \sum_{i=1}^{n_h} (y_i - \bar{y}_h)^2,
+\]
+gde je $\bar{y}_h$ srednja vrednost pilot uzorka u sloju $h$, a $n_h$ veličina pilot uzorka u tom sloju.
+
+Dobijene procene standardne devijacije $\hat{S}_h = \sqrt{s_h^2}$ 
+koriste se u narednom koraku, prilikom određivanja optimalne raspodele ukupnog 
+uzorka po slojevima primenom Neymanove alokacije.
 \subsubsection{Vizuelizacija pilot uzorka}
 
 Uz CSV \texttt{pilot\_to\_count.csv}, za svaku ulaznu sliku generišemo i PNG sa označenim ćelijama pilota. Na overlay-ima:
@@ -388,12 +403,6 @@ Kako bismo popunili napravljeni CSV, korisićemo automatsko brojanje bliceva pom
 reči u narednom poglavlju. Dodatno za neke ćelije koristili smo ručno brojanje.
 
 \subsection{Neymanov metod raspodele obima uzorka po stratumima}
-
-... 
-
-Pogledaj brojeve kad se popravi ono za celije da se izbace
-\newline
-\newline
 \noindent
 Zbog zaokruživanja često se dešava da zbir po stratumima odstupa od ciljne veličine uzorka $n$:
 \[
@@ -459,7 +468,17 @@ Stratum & $n_h$ (pre) & $N_h$ & Diff & $n_h$ (posle) \\
 
 \section{Glavno uzorkovanje i brojanje “bliceva”}
 
-... 
+Nakon završene pilot faze i određivanja optimalne raspodele jedinica po slojevima, 
+sledi glavno uzorkovanje. Ideja glavnog uzorka jeste da se iz svakog sloja odabere 
+onaj broj jedinica koji je unapred određen pomoću Neymanove alokacije. 
+Na taj način obezbeđuje se da slojevi sa većom veličinom ($N_h$) i većom varijabilnošću ($s_h$) 
+dobiju veći broj jedinica, dok slojevi sa manjom varijabilnošću ili obimom dobijaju manje. 
+Ova strategija značajno povećava efikasnost procene u odnosu na proporcionalnu alokaciju, 
+jer omogućava da se ograničeni broj jedinica iskoristi na onim mestima gde najviše doprinose 
+smanjenju ukupne varijanse.
+
+Dobijeni uzorak se na kraju čuva u datoteci 
+\texttt{main\_to\_count.csv} i koristi za dalju analizu i procene.
 
 \subsection{Vizuelizacija glavnog uzorkovanja}
 
@@ -640,8 +659,12 @@ Slika & $\hat T$ & SE & CI donja & CI gornja \\
 ... sta znaci ..
 
 \section{Zaključak}
+Na protestu održanom 15. marta 2025. godine u Beogradu, prema proceni Arhiva javnih skupova, prisustvovalo je između 275.000 i 325.000 ljudi, uz mogućnost da je taj broj bio i veći. \cite{n1protest15za15}
+. Ovaj skup je bio jedan od najvećih u novijoj istoriji Srbije, nadmašujući prethodne proteste po broju učesnika. Međutim, Ministarstvo unutrašnjih poslova Republike Srbije je procenilo da je broj učesnika bio oko 107.000 \cite{insajder_mup_15za15}, što je značajno niže od nezavisnih procena.
 
+Razlike u procenama broja učesnika mogu biti posledica različitih metodoloških pristupa, političkih stavova i ciljeva. Razlike ukazuju i na važnost transparentne metodologije i jasno definisanih kriterijuma brojanja.
 
+U okviru ovog rada, sproveli smo vlastito brojanje učesnika, pri čemu je zabeležen rezultat od oko 170.000 ljudi. Važno je napomenuti da je ovo brojanje izvedeno samo na osnovu prisustva upaljenih „bliceva“ i isključivo u okolini Slavije, dok su procene Arhiva i MUP-a obuhvatale dosta šire teritorije grada i dodatne lokacije gde su se učesnici okupljali. Stoga se naš rezultat ne može direktno porediti sa ukupnim procenama, ali pruža uvid u lokalnu gustinu učesnika i omogućava uporedivu kvantifikaciju na odabranoj lokaciji.
 \newpage
 \begin{thebibliography}{9}
 
@@ -651,6 +674,18 @@ Slika & $\hat T$ & SE & CI donja & CI gornja \\
 	Dostupno na: \url{https://youtube.com/shorts/4pbj2aZAoP4?si=wxzp9pIkflD2CYKN} 
 	(Pristupljeno: 25. septembar 2025.)
 	
+	\bibitem{n1protest15za15}
+	N1 Beograd,
+	\emph{Arhiv javnih skupova izneo procenu o broju učesnika na protestu „15. za 15“},
+	15. mart 2025,
+	\url{https://n1info.rs/vesti/arhiv-javnih-skupova-izneo-procenu-o-broju-ucesnika-na-protestu-15-za-15/}.
+
+	\bibitem{insajder_mup_15za15}
+	Insajder,
+	\emph{MUP o skupu „15. za 15“: U piku na svim lokacijama oko 107.000 ljudi},
+	15. mart 2025,
+	\url{https://www.insajder.net/prenosimo/mup-o-skupu-15-za-15-u-piku-na-svim-lokacijama-oko-107000-ljudi}.
+
 	\end{thebibliography}
 
 \end{document}
