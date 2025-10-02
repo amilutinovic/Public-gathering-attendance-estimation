@@ -50,11 +50,11 @@
 \newpage
 \section{Uvod}
 
-Procena broja ljudi na javnim skupovima važna je za bezbednost, logistiku, planiranje resursa i evaluaciju događaja. Tradicionalne metode brojanja na terenu često su skupe, spore i podložne greškama, naročito kada je gužva neujednačena i kada uslovi posmatranja variraju između lokacija.
+Ocenjivanje broja ljudi na javnim skupovima važno je za bezbednost, logistiku, planiranje resursa i evaluaciju događaja. Tradicionalne metode brojanja na terenu često su skupe, spore i podložne greškama, naročito kada je gužva neujednačena i kada uslovi posmatranja variraju između lokacija.
 Cilj ovog rada je procena ukupnog broja ljudi prisutnih na Slaviji 15.3.2025. , na osnovu slika dobijenih iz drona. 
 \newline
 \newline
-\noindent Korisitićemo stratifikovano uzorkovanje nad slikama podeljenim mrežom sa automatskim razvrstavanjem ćelija u stratume po gustini, kako bi se efikasno i transparentno ocenili ukupan broj prisutnih ljudi.
+\noindent Koristićemo stratifikovano uzorkovanje nad slikama podeljenim mrežom sa automatskim razvrstavanjem ćelija u stratume po gustini, kako bi se efikasno i transparentno ocenili ukupan broj prisutnih ljudi.
 Polazni skup podataka čine fotografije dobijene izdvajenjem frejmova iz video-snimka dronom, dalje isečenih u sedam međusobno disjunktnih slika koje pokrivaju različite ulice posmatranog područja.
 Koristimo stratifikovano uzorkovanje sa pilot fazom i Neymanov metod raspodele obima uzorka po stratumima.
 \newline
@@ -136,13 +136,13 @@ Na narednim slikama prikazani su frejmovi izdvojeni iz snimka dronom.
 
 Kako bi se omogućili uzorkovanje, svaka ulazna slika je podeljena na pravougaoni grid dimenzija 40 x 40 ćelija. 
 Mreža je naprvaljena u R-u, i za svaku ćeliju su čuvani sledeći atributi: 
-jedinstveni identifikator - \texttt{cell\_id}, red i kolonu, koordinate u pikeslima \texttt{(x0, x1, y0, y1)}, oznaku zone - \texttt{zone\_id}, 
+jedinstveni identifikator - \texttt{cell\_id}, red i kolonu, koordinate u pikselima \texttt{(x0, x1, y0, y1)}, oznaku zone - \texttt{zone\_id}, 
 logičku oznaku - \texttt{include} - da li je ćelija uključena u uzorkovanje i stratumski indeks - stratum.
 Informacije čuvamo u tabeli \texttt{starta\_map.csv}, koju zatim popunjavamo.
 
 \begin{figure}[H] 
 	\centering 
-	\includegraphics[width=0.8\textwidth]{../grid_output/slavija-centar_grid.png} 
+	\includegraphics[width=0.8\textwidth]{../outputs/grid_output/slavija-centar_grid.png} 
 	\caption{Slavija.} 
 	\label{fig:slavija} 
 \end{figure}
@@ -153,21 +153,21 @@ Informacije čuvamo u tabeli \texttt{starta\_map.csv}, koju zatim popunjavamo.
 	% Prvi red
 	\begin{subfigure}[b]{0.3\textwidth}
 	  \centering
-	  \includegraphics[width=\textwidth]{../grid_output/prote-mateje_grid.png}
+	  \includegraphics[width=\textwidth]{../outputs/grid_output/prote-mateje_grid.png}
 	  \caption{Prote Mateje}
 	  \label{fig:prote-mateje}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.3\textwidth}
 	  \centering
-	  \includegraphics[width=\textwidth]{../grid_output/nemanjina_grid.png}
+	  \includegraphics[width=\textwidth]{../outputs/grid_output/nemanjina_grid.png}
 	  \caption{Nemanjina}
 	  \label{fig:nemanjina}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.3\textwidth}
 		\centering
-		\includegraphics[width=\textwidth]{../grid_output/beogradska_grid.png}
+		\includegraphics[width=\textwidth]{../outputs/grid_output/beogradska_grid.png}
 		\caption{Beogradska}
 		\label{fig:beogradska}
 	\end{subfigure}
@@ -177,21 +177,21 @@ Informacije čuvamo u tabeli \texttt{starta\_map.csv}, koju zatim popunjavamo.
 	% Drugi red
 	\begin{subfigure}[b]{0.3\textwidth}
 	  \centering
-	  \includegraphics[width=\textwidth]{../grid_output/makenzijeva_grid.png}
+	  \includegraphics[width=\textwidth]{../outputs/grid_output/makenzijeva_grid.png}
 	  \caption{Makenzijeva}
 	  \label{fig:makenzijeva}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.3\textwidth}
 	  \centering
-	  \includegraphics[width=\textwidth]{../grid_output/kralja-milana_grid.png}
+	  \includegraphics[width=\textwidth]{../outputs/grid_output/kralja-milana_grid.png}
 	  \caption{Kralja Milana}
 	  \label{fig:kralja-milana}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.3\textwidth}
 	  \centering
-	  \includegraphics[width=\textwidth]{../grid_output/bulevar-oslobodjenja_grid.png}
+	  \includegraphics[width=\textwidth]{../outputs/grid_output/bulevar-oslobodjenja_grid.png}
 	  \caption{Bulevar oslobođenja}
 	  \label{fig:bulevar-oslobodjenja}
 	\end{subfigure}
@@ -248,7 +248,7 @@ Ovaj vizuelni korak služi kao brza kontrola kvaliteta: ukoliko se uoči da je a
 
 \begin{figure}[H] 
 	\centering 
-	\includegraphics[width=0.8\textwidth]{../grid_output/strata_viz/slavija-centar_strata.png} 
+	\includegraphics[width=0.8\textwidth]{../outputs/grid_output/strata_viz/slavija-centar_strata.png} 
 	\caption{Slavija.} 
 	\label{fig:slavija} 
 \end{figure}
@@ -259,21 +259,21 @@ Ovaj vizuelni korak služi kao brza kontrola kvaliteta: ukoliko se uoči da je a
 	% Prvi red
 	\begin{subfigure}[b]{0.3\textwidth}
 	  \centering
-	  \includegraphics[width=\textwidth]{../grid_output/strata_viz/prote-mateje_strata.png}
+	  \includegraphics[width=\textwidth]{../outputs/grid_output/strata_viz/prote-mateje_strata.png}
 	  \caption{Prote Mateje}
 	  \label{fig:prote-mateje}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.3\textwidth}
 	  \centering
-	  \includegraphics[width=\textwidth]{../grid_output/strata_viz/nemanjina_strata.png}
+	  \includegraphics[width=\textwidth]{../outputs/grid_output/strata_viz/nemanjina_strata.png}
 	  \caption{Nemanjina}
 	  \label{fig:nemanjina}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.3\textwidth}
 		\centering
-		\includegraphics[width=\textwidth]{../grid_output/strata_viz/beogradska_strata.png}
+		\includegraphics[width=\textwidth]{../outputs/grid_output/strata_viz/beogradska_strata.png}
 		\caption{Beogradska}
 		\label{fig:beogradska}
 	\end{subfigure}
@@ -283,26 +283,26 @@ Ovaj vizuelni korak služi kao brza kontrola kvaliteta: ukoliko se uoči da je a
 	% Drugi red
 	\begin{subfigure}[b]{0.3\textwidth}
 	  \centering
-	  \includegraphics[width=\textwidth]{../grid_output/strata_viz/makenzijeva_strata.png}
+	  \includegraphics[width=\textwidth]{../outputs/grid_output/strata_viz/makenzijeva_strata.png}
 	  \caption{Makenzijeva}
 	  \label{fig:makenzijeva}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.3\textwidth}
 	  \centering
-	  \includegraphics[width=\textwidth]{../grid_output/strata_viz/kralja-milana_strata.png}
+	  \includegraphics[width=\textwidth]{../outputs/grid_output/strata_viz/kralja-milana_strata.png}
 	  \caption{Kralja Milana}
 	  \label{fig:kralja-milana}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.3\textwidth}
 	  \centering
-	  \includegraphics[width=\textwidth]{../grid_output/strata_viz/bulevar-oslobodjenja_strata.png}
+	  \includegraphics[width=\textwidth]{../outputs/grid_output/strata_viz/bulevar-oslobodjenja_strata.png}
 	  \caption{Bulevar oslobođenja}
 	  \label{fig:bulevar-oslobodjenja}
 	\end{subfigure}
   
-	\caption{Pregled ćelija po stratumima razlicitih gustina}
+	\caption{Pregled ćelija po stratumima različitih gustina}
 \end{figure}
 
 \noindent
@@ -399,7 +399,7 @@ Uz CSV \texttt{pilot\_to\_count.csv}, za svaku ulaznu sliku generišemo i PNG sa
 
 \noindent
 Ovaj vizuelni prikaz će nam omogućiti da lakše odredimo u kojim ćelijamo brojimo bliceve. 
-Kako bismo popunili napravljeni CSV, korisićemo automatsko brojanje bliceva pomoću python skripte \texttt{auto-count.py}, o kojoj će biti više
+Kako bismo popunili napravljeni CSV, koristićemo automatsko brojanje bliceva pomoću python skripte \texttt{auto-count.py}, o kojoj će biti više
 reči u narednom poglavlju. Dodatno za neke ćelije koristili smo ručno brojanje.
 
 \subsection{Neymanov metod raspodele obima uzorka po stratumima}
@@ -560,7 +560,7 @@ Dobijeni uzorak se na kraju čuva u datoteci
 
 \subsection{Vizuelizacija glavnog uzorkovanja}
 
-Uz CSV \texttt{main\_to\_count.csv}, za svaku ulaznu sliku generišemo i PNG sa označenim ćelijama pilota. Na overlay-ima:
+Uz CSV \texttt{main\_to\_count.csv}, za svaku ulaznu sliku generišemo i PNG sa označenim ćelijama glavnog uzorka. Na overlay-ima:
 \begin{itemize}
 	\item cela slika je prikazana,
 	\item zelenim okvirima su označene ćelije koje su ušle u pilot uzorak.
@@ -627,7 +627,7 @@ Uz CSV \texttt{main\_to\_count.csv}, za svaku ulaznu sliku generišemo i PNG sa 
 
 \noindent
 Ovaj vizuelni prikaz će nam omogućiti da lakše odredimo u kojim ćelijamo brojimo bliceve. 
-Kako bismo popunili napravljeni CSV, korisićemo automatsko brojanje bliceva pomoću python skripte \texttt{auto-count.py}, o kojoj će biti više
+Kako bismo popunili napravljeni CSV, koristićemo automatsko brojanje bliceva pomoću python skripte \texttt{auto-count.py}, o kojoj će biti više
 reči u nastavku. Dodatno za neke ćelije koristili smo ručno brojanje.
 
 
@@ -649,7 +649,65 @@ Koristimo skriptu (auto-count.py) koja popunjava kolonu y u \texttt{pilot\_to\_c
 	\item Per-image „clean count“ pregled (cela slika sa označenim pilot/main ćelijama i svim detektovanim tačkama).
 \end{itemize}
 
-Da li da ubacimo ove clean-count slike??
+\begin{figure}[H] 
+	\centering 
+	\includegraphics[width=0.8\textwidth]{../outputs/sampling_outputs/previews_images_main/slavija-centar_pilot_clean_count_preview.png} 
+	\caption{Slavija.} 
+	\label{fig:slavija} 
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+  
+	% Prvi red
+	\begin{subfigure}[b]{0.3\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{../outputs/sampling_outputs/previews_images_main/prote-mateje_pilot_clean_count_preview.png}
+	  \caption{Prote Mateje}
+	  \label{fig:prote-mateje}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{../outputs/sampling_outputs/previews_images_main/nemanjina_pilot_clean_count_preview.png}
+	  \caption{Nemanjina}
+	  \label{fig:nemanjina}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../outputs/sampling_outputs/previews_images_main/beogradska_pilot_clean_count_preview.png}
+		\caption{Beogradska}
+		\label{fig:beogradska}
+	\end{subfigure}
+  
+	\vspace{0.3cm} % razmak između redova
+  
+	% Drugi red
+	\begin{subfigure}[b]{0.3\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{../outputs/sampling_outputs/previews_images_main/makenzijeva_pilot_clean_count_preview.png}
+	  \caption{Makenzijeva}
+	  \label{fig:makenzijeva}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{../outputs/sampling_outputs/previews_images_main/kralja-milana_pilot_clean_count_preview.png}
+	  \caption{Kralja Milana}
+	  \label{fig:kralja-milana}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{../outputs/sampling_outputs/previews_images_main/bulevar-oslobodjenja_pilot_clean_count_preview.png}
+	  \caption{Bulevar oslobođenja}
+	  \label{fig:bulevar-oslobodjenja}
+	\end{subfigure}
+  
+	\caption{Per-image „clean count“ pregled za glavno uzorkovanje}
+\end{figure}
+
 
 \noindent
 Detekcija (pipeline):
@@ -705,7 +763,7 @@ pa je $\mathrm{SE}_{\mathrm{tot}}=\sqrt{\sum_j \widehat{\mathrm{Var}}(\hat T_j)}
 \hat T_{\mathrm{tot}} \;\pm\; z_{1-\alpha/2}\cdot \mathrm{SE}_{\mathrm{tot}}.
 \]
 
-
+\newpage
 \section{Rezultati i diskusija}
 
 Kad se popravi ono, promeni brojeve 
