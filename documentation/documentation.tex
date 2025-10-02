@@ -404,6 +404,84 @@ reči u narednom poglavlju. Dodatno za neke ćelije koristili smo ručno brojanj
 
 \subsection{Neymanov metod raspodele obima uzorka po stratumima}
 \noindent
+
+Cilj Neymanove alokacije je da za fiksni ukupan broj uzoraka $n$ raspodeli broj uzorkovanih jedinica $n_h$ po stratumaima tako da se minimizuje varijansa procene ciljnog parametra.  
+Za jednu sliku, disperzija procene totalne sume $\hat T$ glasi
+\[
+\mathrm{Var}(\hat T) \;=\; \sum_{h=1}^H N_h^2 \left(1-\frac{n_h}{N_h}\right)\frac{S_h^2}{n_h},
+\]
+gde je $N_h$ veličina populacije (broj ćelija) u stratumu $h$, $n_h$ broj izabranih ćelija u tom stratumu, a $S_h^2$ varijansa u stratumu $h$ (procena se dobija iz pilot uzorka).  
+
+U praksi se često radi aproksimacija koja zanemaruje faktor konačne populacije $(1 - n_h/N_h)$ (što je opravdano kada su frakcije uzorkovanja male), pa se kao cilj minimizuje
+\[
+\sum_{h=1}^H \frac{N_h^2 S_h^2}{n_h}.
+\]
+Pošto mora važiti uslov
+\[
+\sum_{h=1}^H n_h = n,
+\]
+Kako bismo rešili problem sa ograničenjem, uvodimo Lagranžov množilac $\lambda$ i formiramo funkciju
+\[
+L(n_1, \dots, n_H, \lambda) = \sum_{h=1}^H \frac{N_h^2 S_h^2}{n_h} 
++ \lambda \left( \sum_{h=1}^H n_h - n \right).
+\]
+Računamo parcijalni izvod po $n_h$:
+\[
+\frac{\partial L}{\partial n_h} = -\frac{N_h^2 S_h^2}{n_h^2} + \lambda = 0.
+\]
+
+Iz ovog dobijamo
+\[
+\frac{N_h^2 S_h^2}{n_h^2} = \lambda
+\quad \Rightarrow \quad
+n_h = \frac{N_h S_h}{\sqrt{\lambda}}.
+\]
+
+Obim uzorka po stratumu je proporcionalan proizvodu $N_h S_h$.
+
+
+Dakle, klasična Neymanova alokacija glasi
+\[
+\boxed{ \; n_h \;=\; n \cdot \frac{N_h S_h}{\sum_{j=1}^H N_j S_j} \; }.
+\]
+
+\paragraph{Intuicija.} Stratumu $h$ dodeljuje se više jedinica ako je ili veliki ($N_h$ veliko) ili veoma varijabilan ($S_h$ veliko). Time se uzorci usmeravaju tamo gde će imati najveći doprinos smanjenju ukupne varijanse procene.
+
+\paragraph{Praktične napomene pri implementaciji}
+\begin{itemize}
+  \item \textbf{Procena $S_h$.} Standardne devijacije $S_h$ su obično nepoznate pre pilot uzorka — zato se u praksi koriste procene $\hat S_h$ iz pilot faze.
+  \item \textbf{Zaokruživanje i diskretizacija.} Formula daje realne brojeve; potrebno je zaokružiti na celi broj. Zaokruživanje može uvesti residual (suma $n_h$ možda nije tačno $n$).
+  \item \textbf{Ograničenja:} ne smemo dodeliti više jedinica nego što postoji ($n_h \le N_h$), niti manje od minimalnog prihvatljivog broja ($n_h \ge n_{\min}$) ako smo takav prag uveli.
+  \item \textbf{Posebni slučajevi:} ako su sve procene varijanse jednake nuli (npr.\ nema detekcija u pilotu), koristi se alternativna alokacija npr.\ proporcionalna $N_h$.
+  \item \textbf{Popravka (balansiranje):} zbog zaokruživanja suma $\sum_h n_h$ može odstupati od $n$. U radu primenjujemo jednostavnu korekciju.
+\end{itemize}
+
+\paragraph{Algoritamski koraci (kako je izvedeno u kodu)}
+\begin{enumerate}
+  \item Iz pilot uzorka izračunati $\hat S_h$ za svaki stratuma i dobiti $N_h$ (broj ćelija u stratumu, po slici).
+  \item Za svaku sliku izračunati težine $w_h = N_h \hat S_h$ i formirati početnu alokaciju
+  \[
+  n_h^{(0)} = \mathrm{round}\!\Big( n \cdot \frac{w_h}{\sum_j w_j} \Big).
+  \]
+  Ako $\sum_j w_j = 0$, alokacija se radi proporcionalno $N_h$.
+  \item Primeniti ograničenja: $n_h \leftarrow \min\{ \max(n_h, n_{\min}), N_h\}$.
+  \item Izračunati \texttt{diff} = $n - \sum_h n_h$. Primeniti malu korekciju.
+\end{enumerate}
+
+\paragraph{Isečak R-koda} (preuzet iz sampling\_pipeline.R)
+\begin{verbatim}
+# Neyman allocation vector for one image
+neyman_alloc_vec <- function(Nh, sh, n_total, n_min=10) {
+  Nh <- as.numeric(Nh); sh <- as.numeric(sh)
+  w <- Nh * sh
+  if (sum(w) > 0) nh <- round(n_total * w / sum(w)) 
+  else nh <- round(n_total * Nh / sum(Nh))
+  nh <- pmax(nh, pmin(n_min, Nh))
+  nh <- pmin(nh, Nh)
+  nh
+}
+\end{verbatim}
+
 Zbog zaokruživanja često se dešava da zbir po stratumima odstupa od ciljne veličine uzorka $n$:
 \[
 \sum_h n_h \;\neq\; n.
