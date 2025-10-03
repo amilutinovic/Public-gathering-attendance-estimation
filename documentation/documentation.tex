@@ -135,10 +135,10 @@ Na narednim slikama prikazani su frejmovi izdvojeni iz snimka dronom.
 \section{Grid i stratifikacija}
 
 Kako bi se omogućili uzorkovanje, svaka ulazna slika je podeljena na pravougaoni grid dimenzija 40 x 40 ćelija. 
-Mreža je naprvaljena u R-u, i za svaku ćeliju su čuvani sledeći atributi: 
+Mreža je napravljena u R-u, i za svaku ćeliju su čuvani sledeći atributi: 
 jedinstveni identifikator - \texttt{cell\_id}, red i kolonu, koordinate u pikselima \texttt{(x0, x1, y0, y1)}, oznaku zone - \texttt{zone\_id}, 
 logičku oznaku - \texttt{include} - da li je ćelija uključena u uzorkovanje i stratumski indeks - stratum.
-Informacije čuvamo u tabeli \texttt{starta\_map.csv}, koju zatim popunjavamo.
+Informacije čuvamo u tabeli \texttt{strata\_map.csv}, koju zatim popunjavamo.
 
 \begin{figure}[H] 
 	\centering 
@@ -207,8 +207,8 @@ Dobijeni fajl \texttt{strata\_map\_auto.csv}, sa konačnim oznakama \texttt{incl
 
 \subsection{Automatska dodela stratuma (Python)}
 
-Cilj je da automatski razvrstamo grid ćelije u 3 startuma po gustini i pouzdano isključimo neinformativne oblasti radi manjeg troška uzorkovanja i niže varijanse ocene.
-Skripta \texttt{startum.py} za svaku ćeliju računa kompozitni skor gustine, koji kombinuje:
+Cilj je da automatski razvrstamo grid ćelije u 3 stratuma po gustini i pouzdano isključimo neinformativne oblasti radi manjeg troška uzorkovanja i niže varijanse ocene.
+Skripta \texttt{stratum.py} za svaku ćeliju računa kompozitni skor gustine, koji kombinuje:
 \begin{itemize}
     \item udeo svetlih piksela (\texttt{bright\_frac}),
     \item gustinu ivica (Canny edge detection),
@@ -216,10 +216,10 @@ Skripta \texttt{startum.py} za svaku ćeliju računa kompozitni skor gustine, ko
 \end{itemize}
 
 
-\noindent Ulaz: \texttt{starta\_map.csv} (iz R grida) sa kolonama
+\noindent Ulaz: \texttt{strata\_map.csv} (iz R grida) sa kolonama
 \texttt{cell\_id, zone\_id, include, stratum, x0, x1, y0, y1, img\_path}.
 
-\noindent Izlaz: \texttt{starta\_map\_auto.csv} — isto +
+\noindent Izlaz: \texttt{strata\_map\_auto.csv} — isto +
 \texttt{strata\_score} (kompozitni skor), \texttt{black\_frac} (udeo “crnih” piksela), finalni include i stratum (1/2/3).
 \newline
 \newline
@@ -241,7 +241,7 @@ Najvažniji parametri skripte su prag za crnu boju \texttt{v\_black}, udeo crnih
 \subsection{Vizuelna provera stratuma (R)}
 
 Rezultati automatske dodele vizuelizuju se, koja za svaku sliku prikazuje grid sa ćelijama obojenim po stratumu i zasenčenim poljima koja su isključena (include=0).
-Crveno obojene su ćelije najveće gustine - startum = 1, žute su ćelije srednje gustine - stratum = 2, zelene ćelije najmanje gustine - startum = 3.
+Crveno obojene su ćelije najveće gustine - stratum = 1, žute su ćelije srednje gustine - stratum = 2, zelene ćelije najmanje gustine - stratum = 3.
 \newline
 \noindent
 Ovaj vizuelni korak služi kao brza kontrola kvaliteta: ukoliko se uoči da je algoritam označio kao gušće delove koji su u stvarnosti prazni (ili obrnuto), moguće je ručno prilagoditi vrednosti parametara i ponoviti automatsku dodelu.
@@ -398,14 +398,14 @@ Uz CSV \texttt{pilot\_to\_count.csv}, za svaku ulaznu sliku generišemo i PNG sa
 \end{figure}
 
 \noindent
-Ovaj vizuelni prikaz će nam omogućiti da lakše odredimo u kojim ćelijamo brojimo bliceve. 
+Ovaj vizuelni prikaz će nam omogućiti da lakše odredimo u kojim ćelijama brojimo bliceve. 
 Kako bismo popunili napravljeni CSV, koristićemo automatsko brojanje bliceva pomoću python skripte \texttt{auto-count.py}, o kojoj će biti više
 reči u narednom poglavlju. Dodatno za neke ćelije koristili smo ručno brojanje.
 
 \subsection{Neymanov metod raspodele obima uzorka po stratumima}
 \noindent
 
-Cilj Neymanove alokacije je da za fiksni ukupan broj uzoraka $n$ raspodeli broj uzorkovanih jedinica $n_h$ po stratumaima tako da se minimizuje varijansa procene ciljnog parametra.  
+Cilj Neymanove alokacije je da za fiksni ukupan broj uzoraka $n$ raspodeli broj uzorkovanih jedinica $n_h$ po stratumima tako da se minimizuje varijansa procene ciljnog parametra.  
 Za jednu sliku, disperzija procene totalne sume $\hat T$ glasi
 \[
 \mathrm{Var}(\hat T) \;=\; \sum_{h=1}^H N_h^2 \left(1-\frac{n_h}{N_h}\right)\frac{S_h^2}{n_h},
@@ -563,7 +563,7 @@ Dobijeni uzorak se na kraju čuva u datoteci
 Uz CSV \texttt{main\_to\_count.csv}, za svaku ulaznu sliku generišemo i PNG sa označenim ćelijama glavnog uzorka. Na overlay-ima:
 \begin{itemize}
 	\item cela slika je prikazana,
-	\item zelenim okvirima su označene ćelije koje su ušle u pilot uzorak.
+	\item zelenim okvirima su označene ćelije koje su ušle u glavni uzorak.
 \end{itemize}
 
 \begin{figure}[H] 
@@ -632,10 +632,7 @@ reči u nastavku. Dodatno za neke ćelije koristili smo ručno brojanje.
 
 
 \subsection{Automatsko brojanje (Python)}
-Ne znam da li ovo mozda posebno poglavlje a mozda da ostane deo, odluci
-\newline
-\newline
-\noindent
+
 Koristimo skriptu (auto-count.py) koja popunjava kolonu y u \texttt{pilot\_to\_count.csv} ili \texttt{main\_to\_count.csv}.
 \newline
 \noindent Ulaz: 
@@ -736,7 +733,7 @@ Ukupan broj (total) za sliku ocenjujemo:
 \[
 \hat T \;=\; \sum_{h=1}^H N_h\,\bar y_h.
 \]
-Occenu varijanse dobijamo sa korekcijom konačne populacije po stratumu:
+Ocenu varijanse dobijamo sa korekcijom konačne populacije po stratumu:
 \[
 \widehat{\mathrm{Var}}(\hat T) \;=\; \sum_{h=1}^H 
 N_h^2 \left(1-\frac{n_h}{N_h}\right)\frac{s_h^2}{n_h}.
